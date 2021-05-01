@@ -20,7 +20,9 @@ namespace TimeLoopHelper
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
-              webBuilder.UseStartup<Startup>();
+              webBuilder
+                .UseUrls("http://localhost:5022")
+                .UseStartup<Startup>();
             });
   }
 }
