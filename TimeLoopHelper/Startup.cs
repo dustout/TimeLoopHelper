@@ -35,15 +35,16 @@ namespace TimeLoopHelper
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddDbContext<ApplicationDbContext>(options =>
-          options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+          options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
       services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
           .AddEntityFrameworkStores<ApplicationDbContext>();
       services.AddRazorPages();
       services.AddServerSideBlazor();
       services.AddBootstrapCss();
       services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+      services.AddScoped<VerifiedTimeLoopService>();
+      services.AddScoped<ChallengeService>();
       services.AddDatabaseDeveloperPageExceptionFilter();
-      services.AddTransient<VerifiedTimeLoopService>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

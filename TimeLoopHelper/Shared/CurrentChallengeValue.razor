@@ -1,0 +1,24 @@
+﻿@inject ChallengeService _challengeService
+
+<span>@currentChallenge</span>
+
+@code {
+  private string currentChallenge = String.Empty;
+
+  private async Task UpdateValues()
+  {
+    currentChallenge = await _challengeService.GetCurrentChallengeValue();
+
+    if (String.IsNullOrEmpty(currentChallenge))
+    {
+      currentChallenge = "CHALLENGE MISSING";
+
+    }
+  }
+
+  protected override async Task OnInitializedAsync()
+  {
+    await UpdateValues();
+  }
+}
+

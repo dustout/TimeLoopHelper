@@ -11,6 +11,8 @@ namespace TimeLoopHelper.Models
 
     public string Value { get; set; }
 
-    public DateTime ValidOn { get; set; }
+    public DateTime ValidOnStartUtc { get; set; }
+
+    public DateTime ValidOnEndUtc { get; set; }
   }
 }

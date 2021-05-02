@@ -1,21 +1,18 @@
 ﻿@inject VerifiedTimeLoopService _timeLoopService
 
-<div class="mega-number mb-3">@currentCount</div> 
+<div class="mega-number mb-3">@currentCount</div>
 
 @code {
-  private int currentCount = 0;
+  private int currentCount = -1;
 
   private async Task UpdateCurrentCount()
   {
     currentCount = await _timeLoopService.GetVerifiedTimeLoopersCount();
   }
 
-  protected override async Task OnAfterRenderAsync(bool firstRender)
+  protected override async Task OnInitializedAsync()
   {
-    if (firstRender)
-    {
-      await UpdateCurrentCount();
-    }
+    await UpdateCurrentCount();
   }
 }
 
