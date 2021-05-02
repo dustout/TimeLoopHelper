@@ -1,0 +1,56 @@
+﻿@inject ChallengeService _challengeService
+
+@if (isInTimeLoop == true)
+{
+  <h3 class="text-success">You are in a time loop</h3>
+}
+
+@if (isInTimeLoop == false && failAttemptCount <= 1)
+{
+  <h3 class="text-danger">Incorrect Guess, please try again</h3>
+}
+
+@if (isInTimeLoop == false && failAttemptCount > 1)
+{
+  <h3 class="text-danger">Incorrect Guess #@failAttemptCount, please try again.</h3>
+}
+
+<BSForm Model="@submission" OnValidSubmit="@ValidSubmit">
+  <DataAnnotationsValidator />
+  <BSFormGroup>
+    <BSBasicInput Id="value" InputType="InputType.Text" PlaceHolder="Next Hours Challenge" @bind-Value="submission.Value" ValidateOnChange="true" />
+    <BSFormFeedback For="@(() => submission.Value)" />
+  </BSFormGroup>
+  <BSButton Color="Color.Primary" ButtonType="ButtonType.Submit" IsDisabled="isLoading" IsBlock="true">Submit</BSButton>
+</BSForm>
+
+
+@code {
+  private bool isLoading = false;
+  private ChallengeSubmission submission = new ChallengeSubmission();
+  private string submissionResponse = String.Empty;
+  private bool? isInTimeLoop = null;
+  private int failAttemptCount = 0;
+
+  private async Task ValidSubmit()
+  {
+    //set system into loading mode
+    isLoading = true;
+    StateHasChanged();
+
+    //check if submission is valid
+    var nextSubmission = await _challengeService.GetNextChallengeValue();
+    if (nextSubmission.ToUpper() == submission.Value.ToUpper())
+    {
+      isInTimeLoop = true;
+    }
+    else
+    {
+      isInTimeLoop = false;
+      failAttemptCount++;
+    }
+
+    //reset button
+    isLoading = false;
+  }
+}

@@ -2,8 +2,18 @@
 
 <span>@currentChallenge</span>
 
+<div>
+  <BSButton OnClick="GenerateChallengs" IsDisabled="isLoading">Generate Challenges</BSButton>
+</div>
+
+<div>
+  Challenge Count: @challengeCount
+</div>
+
 @code {
-  private string currentChallenge = String.Empty;
+  private string currentChallenge = "Loading...";
+  private int challengeCount = 0;
+  private bool isLoading = true;
 
   private async Task UpdateValues()
   {
@@ -12,13 +22,34 @@
     if (String.IsNullOrEmpty(currentChallenge))
     {
       currentChallenge = "CHALLENGE MISSING";
-
     }
+
+    challengeCount = await _challengeService.GetChallengeCount();
+
+    isLoading = false;
   }
 
   protected override async Task OnInitializedAsync()
   {
     await UpdateValues();
+  }
+
+  private async Task GenerateChallengs()
+  {
+    //set GUI to loading state
+    isLoading = true;
+    StateHasChanged();
+
+    //remove challenges and show state in gui
+    await _challengeService.RemoveAllChallenges();
+    await UpdateValues();
+    isLoading = true;
+    StateHasChanged();
+
+    //generate new challengess
+    await _challengeService.GenerateChallenges();
+    await UpdateValues();
+    isLoading = false;
   }
 }
 

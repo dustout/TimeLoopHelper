@@ -1,0 +1,15 @@
+﻿@page "/nextValue"
+
+@inject ChallengeService _challengeService
+
+
+<h3>Next Value: @nextValue</h3>
+
+@code {
+  private string nextValue = "Loading...";
+
+  protected override async Task OnInitializedAsync()
+  {
+    nextValue = await _challengeService.GetNextChallengeValue();
+  }
+}

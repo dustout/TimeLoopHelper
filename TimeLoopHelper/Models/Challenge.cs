@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace TimeLoopHelper.Models
 {
+  [Index(nameof(ValidOnStartUtc))]
+  [Index(nameof(ValidOnEndUtc))]
   public class Challenge
   {
     public int Id { get; set; }
