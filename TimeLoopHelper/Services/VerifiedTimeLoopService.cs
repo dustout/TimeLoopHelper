@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TimeLoopHelper.Data;
+using TimeLoopHelper.Models;
 
 namespace TimeLoopHelper.Services
 {
@@ -19,6 +20,18 @@ namespace TimeLoopHelper.Services
     public async Task<int> GetVerifiedTimeLoopersCount()
     {
       return await _db.VerifiedTimeLoops.CountAsync();
+    }
+
+    public async Task RegisterTimeLoop(Challenge passedChallenge)
+    {
+      var newTimeLoop = new VerifiedTimeLoop()
+      {
+        ChallengeId = passedChallenge.Id
+      };
+
+      _db.VerifiedTimeLoops.Add(newTimeLoop);
+
+      await _db.SaveChangesAsync();
     }
   }
 }

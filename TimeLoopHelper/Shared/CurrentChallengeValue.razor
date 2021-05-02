@@ -12,7 +12,7 @@
 
 @code {
   private string currentChallenge = "Loading...";
-  private int challengeCount = 0;
+  private string challengeCount = "Loading...";
   private bool isLoading = true;
 
   private async Task UpdateValues()
@@ -24,7 +24,8 @@
       currentChallenge = "CHALLENGE MISSING";
     }
 
-    challengeCount = await _challengeService.GetChallengeCount();
+    var challengeCountInt = await _challengeService.GetChallengeCount();
+    challengeCount = challengeCountInt.ToString();
 
     isLoading = false;
   }

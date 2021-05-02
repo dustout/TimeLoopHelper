@@ -3,11 +3,12 @@
 <div class="mega-number mb-3">@currentCount</div>
 
 @code {
-  private int currentCount = -1;
+  private string currentCount = "Loading...";
 
   private async Task UpdateCurrentCount()
   {
-    currentCount = await _timeLoopService.GetVerifiedTimeLoopersCount();
+    var currentCountInt = await _timeLoopService.GetVerifiedTimeLoopersCount();
+    currentCount = currentCountInt.ToString();
   }
 
   protected override async Task OnInitializedAsync()

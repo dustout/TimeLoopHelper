@@ -35,11 +35,35 @@ namespace TimeLoopHelper.Services
       return challengeValue;
     }
 
+    public async Task<Challenge> GetChallengeByValue(string value)
+    {
+      var challenge = await _db.Challenges
+        .Where(x => x.Value.ToUpper() == value.ToUpper())
+        .FirstOrDefaultAsync();
+
+      return challenge;
+    }
+
+    public IQueryable<Challenge> GetNextChallengeQuery()
+    {
+      var nextChallengeQuery = _db.Challenges
+        .Where(x => x.ValidOnStartUtc <= DateTime.UtcNow.AddHours(1))
+        .Where(x => x.ValidOnEndUtc > DateTime.UtcNow.AddHours(1));
+
+      return nextChallengeQuery;
+    }
+
+    public async Task<Challenge> GetNextChallenge()
+    {
+      var nextChallenge = await GetNextChallengeQuery()
+        .FirstOrDefaultAsync();
+
+      return nextChallenge;
+    }
+
     public async Task<string> GetNextChallengeValue()
     {
-      var nextChallengeValue = await _db.Challenges
-        .Where(x => x.ValidOnStartUtc <= DateTime.UtcNow.AddHours(1))
-        .Where(x => x.ValidOnEndUtc > DateTime.UtcNow.AddHours(1))
+      var nextChallengeValue = await GetNextChallengeQuery()
         .Select(x => x.Value)
         .FirstOrDefaultAsync();
 

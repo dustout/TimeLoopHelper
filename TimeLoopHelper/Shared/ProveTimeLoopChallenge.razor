@@ -1,4 +1,5 @@
 ﻿@inject ChallengeService _challengeService
+@inject VerifiedTimeLoopService _verifiedTimeLoopService
 
 @if (isInTimeLoop == true)
 {
@@ -43,6 +44,9 @@
     if (nextSubmission.ToUpper() == submission.Value.ToUpper())
     {
       isInTimeLoop = true;
+
+      var challenge = await _challengeService.GetNextChallenge();
+      _verifiedTimeLoopService.RegisterTimeLoop(challenge);
     }
     else
     {
