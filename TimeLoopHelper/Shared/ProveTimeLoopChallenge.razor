@@ -1,5 +1,6 @@
 ﻿@inject ChallengeService _challengeService
 @inject VerifiedTimeLoopService _verifiedTimeLoopService
+@inject AppStateService _state
 
 @if (isInTimeLoop == true)
 {
@@ -46,7 +47,9 @@
       isInTimeLoop = true;
 
       var challenge = await _challengeService.GetNextChallenge();
-      _verifiedTimeLoopService.RegisterTimeLoop(challenge);
+      await _verifiedTimeLoopService.RegisterTimeLoop(challenge);
+
+      _state.TimeLoopUserCount++;
     }
     else
     {

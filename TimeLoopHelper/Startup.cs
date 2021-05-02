@@ -44,6 +44,7 @@ namespace TimeLoopHelper
       services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
       services.AddScoped<VerifiedTimeLoopService>();
       services.AddScoped<ChallengeService>();
+      services.AddScoped<AppStateService>();
       services.AddDatabaseDeveloperPageExceptionFilter();
     }
 

@@ -1,14 +1,19 @@
 ﻿@inject VerifiedTimeLoopService _timeLoopService
+@inject AppStateService _state
 
-<div class="mega-number mb-3">@currentCount</div>
+@if (_state.TimeLoopUserCount >= 0)
+{
+  <div class="mega-number mb-3">@_state.TimeLoopUserCount</div>
+}
+else
+{
+  <div class="mega-number mb-3">-</div>
+}
 
 @code {
-  private string currentCount = "Loading...";
-
   private async Task UpdateCurrentCount()
   {
-    var currentCountInt = await _timeLoopService.GetVerifiedTimeLoopersCount();
-    currentCount = currentCountInt.ToString();
+    _state.TimeLoopUserCount = await _timeLoopService.GetVerifiedTimeLoopersCount();
   }
 
   protected override async Task OnInitializedAsync()
@@ -17,3 +22,14 @@
   }
 }
 
+@code {
+  protected override void OnInitialized()
+  {
+    _state.OnChange += StateHasChanged;
+  }
+
+  public void Dispose()
+  {
+    _state.OnChange -= StateHasChanged;
+  }
+}

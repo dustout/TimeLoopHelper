@@ -85,7 +85,7 @@ namespace TimeLoopHelper.Services
       //generate new challenges
       var challengeValidForLength = new TimeSpan(hours:1, minutes: 0, seconds: 0);
       var challengeStartDate = DateTime.UtcNow.Date.AddDays(-1);
-      var challengeEndDate = challengeStartDate.AddYears(1);
+      var challengeEndDate = challengeStartDate.AddYears(20);
       var iteratorDateTime = challengeStartDate;
 
       while(iteratorDateTime < challengeEndDate)

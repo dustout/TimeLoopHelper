@@ -25,7 +25,7 @@
     }
 
     var challengeCountInt = await _challengeService.GetChallengeCount();
-    challengeCount = challengeCountInt.ToString();
+    challengeCount = challengeCountInt.ToString("n0");
 
     isLoading = false;
   }
