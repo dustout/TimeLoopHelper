@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BlazorStrap" Version="1.5.1" />
+    <PackageReference Include="BlazorStrap.Extensions.BSDataTable" Version="1.5.0" />
+    <PackageReference Include="BlazorStrap.Extensions.FluentValidation" Version="1.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.5" />

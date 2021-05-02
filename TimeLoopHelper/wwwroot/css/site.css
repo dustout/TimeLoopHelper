@@ -1,11 +1,33 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
-html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+html {
+  font-size: 20px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 24px;
+  }
 }
 
 a, .btn-link {
     color: #0366d6;
+}
+
+.mega-number{
+  font-size: 8rem;
+  font-weight: 700;
+  line-height:1;
+}
+
+.big-svg {
+  height: 150px;
+}
+
+@media (min-width: 768px) {
+  .big-svg {
+    height: 200px;
+  }
 }
 
 .btn-primary {
