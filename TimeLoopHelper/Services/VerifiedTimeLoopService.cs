@@ -33,5 +33,15 @@ namespace TimeLoopHelper.Services
 
       await _db.SaveChangesAsync();
     }
+
+    public async Task RemoveAll()
+    {
+      //delete existing challenges
+      var existingLoops = _db.VerifiedTimeLoops;
+      _db.RemoveRange(existingLoops);
+
+      //save changes
+      await _db.SaveChangesAsync();
+    }
   }
 }
