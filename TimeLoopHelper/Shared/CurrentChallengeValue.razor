@@ -3,7 +3,7 @@
 <span>@currentChallenge</span>
 
 <div>
-  <BSButton OnClick="GenerateChallengs" IsDisabled="isLoading">Generate Challenges</BSButton>
+  <BSButton OnClick="GenerateChallenges" IsDisabled="isLoading">Generate Challenges</BSButton>
 </div>
 
 <div>
@@ -35,7 +35,7 @@
     await UpdateValues();
   }
 
-  private async Task GenerateChallengs()
+  private async Task GenerateChallenges()
   {
     //set GUI to loading state
     isLoading = true;
