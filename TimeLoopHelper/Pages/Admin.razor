@@ -3,138 +3,139 @@
 @inject ChallengeService _challengeService
 @inject VerifiedTimeLoopService _verifiedService
 
-<h1 class="text-center">Admin</h1>
-<hr />
+  <br />
+  <h1 class="text-center">🧙‍♂️ Admin</h1>
+  <hr />
 
 
-<div class="card">
-  <div class="card-header">
-    Actions
+  <div class="card">
+    <div class="card-header">
+      Actions
+    </div>
+    <div class="card-body">
+
+      <div class="media">
+        <div class="media-body">
+          <strong class="mt-0">Regenerate Challenges</strong>
+          <p class="mb-2">
+            Challenges are stored in the database, clicking this button will delete all challenges and make new ones.
+          </p>
+          <p>
+            <BSButton OnClick="GenerateChallenges" IsDisabled="isLoading" Size="Size.Small">Regenerate Challenges</BSButton>
+          </p>
+        </div>
+      </div>
+
+      <div class="media">
+        <div class="media-body">
+          <strong class="mt-0">Reset Success Count</strong>
+          <p class="mb-2">
+            Reset success count back to 0
+          </p>
+          <p>
+            <BSButton OnClick="ResetSuccessCount" IsDisabled="isLoading" Size="Size.Small">Reset Success Count</BSButton>
+          </p>
+        </div>
+      </div>
+
+    </div>
   </div>
-  <div class="card-body">
 
-    <div class="media">
-      <div class="media-body">
-        <strong class="mt-0">Regenerate Challenges</strong>
-        <p class="mb-2">
-          Challenges are stored in the database, clicking this button will delete all challenges and make new ones.
-        </p>
-        <p>
-          <BSButton OnClick="GenerateChallenges" IsDisabled="isLoading" Size="Size.Small">Regenerate Challenges</BSButton>
-        </p>
+  <br />
+  <div class="card">
+    <div class="card-header">
+      Info
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th width="300px">Description</th>
+              <th class="text-left">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td scope="row">Challenges Count</td>
+              <td class="text-left">@challengesCount</td>
+            </tr>
+            <tr>
+              <td scope="row">Success Count</td>
+              <td class="text-left">@successCount</td>
+            </tr>
+            <tr>
+              <td scope="row">Current Challenge</td>
+              <td class="text-left">@currentChallenge</td>
+            </tr>
+            <tr>
+              <td scope="row">Next Challenge</td>
+              <td class="text-left">@nextChallenge</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-
-    <div class="media">
-      <div class="media-body">
-        <strong class="mt-0">Reset Success Count</strong>
-        <p class="mb-2">
-          Reset success count back to 0
-        </p>
-        <p>
-          <BSButton OnClick="ResetSuccessCount" IsDisabled="isLoading" Size="Size.Small">Reset Success Count</BSButton>
-        </p>
-      </div>
-    </div>
-
   </div>
-</div>
 
-<br />
-<div class="card">
-  <div class="card-header">
-    Info
-  </div>
-  <div class="card-body p-0">
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th width="300px">Description</th>
-            <th class="text-left">Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td scope="row">Challenges Count</td>
-            <td class="text-left">@challengesCount</td>
-          </tr>
-          <tr>
-            <td scope="row">Success Count</td>
-            <td class="text-left">@successCount</td>
-          </tr>
-          <tr>
-            <td scope="row">Current Challenge</td>
-            <td class="text-left">@currentChallenge</td>
-          </tr>
-          <tr>
-            <td scope="row">Next Challenge</td>
-            <td class="text-left">@nextChallenge</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+  <br />
 
-<br />
+  @code {
+    private string challengesCount = "Loading...";
+    private string successCount = "Loading...";
+    private string currentChallenge = "Loading...";
+    private string nextChallenge = "Loading...";
+    private bool isLoading = false;
 
-@code {
-  private string challengesCount = "Loading...";
-  private string successCount = "Loading...";
-  private string currentChallenge = "Loading...";
-  private string nextChallenge = "Loading...";
-  private bool isLoading = false;
-
-  protected override async Task OnInitializedAsync()
-  {
-    await UpdateValues();
-  }
-
-  private async Task UpdateValues()
-  {
-    challengesCount = (await _challengeService.GetChallengeCount()).ToString("N0");
-    successCount = (await _verifiedService.GetVerifiedTimeLoopersCount()).ToString("N0");
-    currentChallenge = await _challengeService.GetCurrentChallengeValue();
-    nextChallenge = await _challengeService.GetNextChallengeValue();
-  }
-
-  private async Task GenerateChallenges()
-  {
-    if (isLoading)
+    protected override async Task OnInitializedAsync()
     {
-      return;
+      await UpdateValues();
     }
 
-    //set GUI to loading state
-    isLoading = true;
-    StateHasChanged();
-
-    //remove challenges and show state in gui
-    await _challengeService.RemoveAllChallenges();
-    await UpdateValues();
-    isLoading = true;
-    StateHasChanged();
-
-    //generate new challengess
-    await _challengeService.GenerateChallenges();
-    await UpdateValues();
-    isLoading = false;
-  }
-
-  private async Task ResetSuccessCount()
-  {
-    if (isLoading)
+    private async Task UpdateValues()
     {
-      return;
+      challengesCount = (await _challengeService.GetChallengeCount()).ToString("N0");
+      successCount = (await _verifiedService.GetVerifiedTimeLoopersCount()).ToString("N0");
+      currentChallenge = await _challengeService.GetCurrentChallengeValue();
+      nextChallenge = await _challengeService.GetNextChallengeValue();
     }
 
-    //set GUI to loading state
-    isLoading = true;
-    StateHasChanged();
+    private async Task GenerateChallenges()
+    {
+      if (isLoading)
+      {
+        return;
+      }
 
-    await _verifiedService.RemoveAll();
-    await UpdateValues();
-    isLoading = false;
+      //set GUI to loading state
+      isLoading = true;
+      StateHasChanged();
+
+      //remove challenges and show state in gui
+      await _challengeService.RemoveAllChallenges();
+      await UpdateValues();
+      isLoading = true;
+      StateHasChanged();
+
+      //generate new challengess
+      await _challengeService.GenerateChallenges();
+      await UpdateValues();
+      isLoading = false;
+    }
+
+    private async Task ResetSuccessCount()
+    {
+      if (isLoading)
+      {
+        return;
+      }
+
+      //set GUI to loading state
+      isLoading = true;
+      StateHasChanged();
+
+      await _verifiedService.RemoveAll();
+      await UpdateValues();
+      isLoading = false;
+    }
   }
-}
