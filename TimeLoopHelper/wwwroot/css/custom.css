@@ -7230,6 +7230,9 @@ body {
 .lead {
   letter-spacing: -1px; }
 
+.header-link {
+  font-weight: 500; }
+
 /* The Overlay (background) */
 .overlay {
   /* Height & width depends on how you want to reveal the overlay (see JS below) */

@@ -1,22 +1,42 @@
 ﻿@inherits LayoutComponentBase
 
-  <AuthorizeView Roles="Admin">
-    <div class="row" style="position:relative;height:0;z-index:100;">
-      <div class="col">
-        <p class="float-left"><a href="/">🏠 Home</a></p>
-        <p class="float-right"><a href="/admin">🧙‍♂️ Admin</a></p>
-      </div>
-    </div>
-  </AuthorizeView>
 
-  <div class="page">
-    <div class="main">
-      <div class="content">
-        <div class="row">
-          <div class="col">
-            @Body
-          </div>
+<div class="row" style="position:relative;height:0;z-index:100;">
+  <div class="col header-link">
+    <AuthorizeView Roles="Admin">
+      <p class="float-left"><a href="/">🏠 Home</a></p>
+    </AuthorizeView>
+
+    <div class="float-right">
+      <form method="post" class="form-inline" action="Identity/Account/LogOut">
+        <AuthorizeView Roles="Admin">
+          <a href="/admin">🧙‍♂️ Admin</a>
+        </AuthorizeView>
+        <AuthorizeView>
+          <Authorized>
+            <button type="submit" class="nav-link btn btn-link header-link" style="text-decoration:underline;">Logout</button>
+          </Authorized>
+          <NotAuthorized>
+            <a href="Identity/Account/Register">Register</a>
+            <a class="ml-3" href="Identity/Account/Login">Log in</a>
+          </NotAuthorized>
+        </AuthorizeView>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="page">
+  <div class="main">
+    <div class="content">
+      <div class="row">
+        <div class="col">
+          @Body
         </div>
       </div>
     </div>
   </div>
+</div>

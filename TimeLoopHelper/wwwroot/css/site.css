@@ -1,9 +1,5 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
-a, .btn-link {
-    color: #0366d6;
-}
-
 .mega-number{
   font-size: 8rem;
   font-weight: 700;
