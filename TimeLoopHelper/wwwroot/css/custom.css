@@ -130,11 +130,11 @@ sup {
   top: -.5em; }
 
 a {
-  color: #1c7ed6;
-  text-decoration: none;
+  color: #212529;
+  text-decoration: underline;
   background-color: transparent; }
   a:hover {
-    color: #135692;
+    color: #1c7dd5;
     text-decoration: underline; }
 
 a:not([href]):not([class]) {
@@ -1747,6 +1747,7 @@ textarea.form-control {
   font-weight: 400;
   color: #212529;
   text-align: center;
+  text-decoration: none;
   vertical-align: middle;
   user-select: none;
   background-color: transparent;
@@ -2152,10 +2153,10 @@ fieldset:disabled a.btn {
 
 .btn-link {
   font-weight: 400;
-  color: #1c7ed6;
-  text-decoration: none; }
+  color: #212529;
+  text-decoration: underline; }
   .btn-link:hover {
-    color: #135692;
+    color: #1c7dd5;
     text-decoration: underline; }
   .btn-link:focus, .btn-link.focus {
     text-decoration: underline; }
@@ -2376,6 +2377,7 @@ input[type="button"].btn-block {
   font-weight: 400;
   color: #212529;
   text-align: inherit;
+  text-decoration: none;
   white-space: nowrap;
   background-color: transparent;
   border: 0; }
@@ -2987,7 +2989,8 @@ input[type="button"].btn-block {
 
 .nav-link {
   display: block;
-  padding: 0.5rem 1rem; }
+  padding: 0.5rem 1rem;
+  text-decoration: none; }
   .nav-link:hover, .nav-link:focus {
     text-decoration: none; }
   .nav-link.disabled {
@@ -3526,12 +3529,13 @@ input[type="button"].btn-block {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #1c7ed6;
+  color: #212529;
+  text-decoration: none;
   background-color: #ffffff;
   border: 1px solid #dee2e6; }
   .page-link:hover {
     z-index: 2;
-    color: #135692;
+    color: #1c7dd5;
     text-decoration: none;
     background-color: #f1f3f5;
     border-color: #dee2e6; }
@@ -3875,6 +3879,7 @@ input[type="button"].btn-block {
   position: relative;
   display: block;
   padding: 0.75rem 1.25rem;
+  text-decoration: none;
   background-color: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.125); }
   .list-group-item:first-child {
