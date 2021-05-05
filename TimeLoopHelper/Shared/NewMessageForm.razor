@@ -74,50 +74,50 @@
 }
 
 @code {
-private bool isLoading = false;
-private ChallengeSubmission submission = new ChallengeSubmission();
-private string currentChallenge = "Loading...";
+  private bool isLoading = false;
+  private ChallengeSubmission submission = new ChallengeSubmission();
+  private string currentChallenge = "Loading...";
 
-protected override async Task OnInitializedAsync()
-{
-  currentChallenge = await _challengeService.GetCurrentChallengeValue();
-
-  if (string.IsNullOrEmpty(currentChallenge))
+  protected override async Task OnInitializedAsync()
   {
-    currentChallenge = "NO CHALLENGE FOUND";
-  }
-}
+    currentChallenge = await _challengeService.GetCurrentChallengeValue();
 
-private async Task ValidSubmit()
-{
-  //prevent double clicks
-  if (isLoading)
-  {
-    return;
+    if (string.IsNullOrEmpty(currentChallenge))
+    {
+      currentChallenge = "NO CHALLENGE FOUND";
+    }
   }
 
-  //set system into loading mode
-  isLoading = true;
-
-  //check if submission is valid
-  var nextChallenge = await _challengeService.GetNextChallengeValue();
-  if (String.IsNullOrEmpty(submission.NextChallenge) == false
-    && nextChallenge.ToUpper() == submission.NextChallenge.ToUpper())
+  private async Task ValidSubmit()
   {
+    //prevent double clicks
+    if (isLoading)
+    {
+      return;
+    }
 
-    var challenge = await _challengeService.GetNextChallenge();
-    await _verifiedTimeLoopService.RegisterTimeLoop(challenge, submission.Message);
+    //set system into loading mode
+    isLoading = true;
 
-    _state.TimeLoopUserCount++;
+    //check if submission is valid
+    var nextChallenge = await _challengeService.GetNextChallengeValue();
+    if (String.IsNullOrEmpty(submission.NextChallenge) == false
+      && nextChallenge.ToUpper() == submission.NextChallenge.ToUpper())
+    {
 
-    successModal.Show();
+      var challenge = await _challengeService.GetNextChallenge();
+      await _verifiedTimeLoopService.RegisterTimeLoop(challenge, submission.Message);
+
+      _state.TimeLoopUserCount++;
+
+      successModal.Show();
+    }
+    else
+    {
+      failModal.Show();
+    }
+
+    //reset button
+    isLoading = false;
   }
-  else
-  {
-    failModal.Show();
-  }
-
-  //reset button
-  isLoading = false;
-}
 }
