@@ -39,7 +39,7 @@
     <h3 class="text-success">Success</h3>
 
     <p class="m-0">
-      Your Message has been posted for others in a time loop to view. Best of luck. 
+      Your Message has been posted for others in a time loop to view. Best of luck.
     </p>
 
   </BSModalBody>
@@ -76,45 +76,50 @@
 }
 
 @code {
-  private bool isLoading = false;
-  private ChallengeSubmission submission = new ChallengeSubmission();
-  private string currentChallenge = "Loading...";
+private bool isLoading = false;
+private ChallengeSubmission submission = new ChallengeSubmission();
+private string currentChallenge = "Loading...";
 
-  protected override async Task OnInitializedAsync()
+protected override async Task OnInitializedAsync()
+{
+  currentChallenge = await _challengeService.GetCurrentChallengeValue();
+
+  if (string.IsNullOrEmpty(currentChallenge))
   {
-    currentChallenge = await _challengeService.GetCurrentChallengeValue();
+    currentChallenge = "NO CHALLENGE FOUND";
+  }
+}
+
+private async Task ValidSubmit()
+{
+  //prevent double clicks
+  if (isLoading)
+  {
+    return;
   }
 
-  private async Task ValidSubmit()
+  //set system into loading mode
+  isLoading = true;
+
+  //check if submission is valid
+  var nextChallenge = await _challengeService.GetNextChallengeValue();
+  if (String.IsNullOrEmpty(submission.NextChallenge) == false
+    && nextChallenge.ToUpper() == submission.NextChallenge.ToUpper())
   {
-    //prevent double clicks
-    if (isLoading)
-    {
-      return;
-    }
 
-    //set system into loading mode
-    isLoading = true;
+    var challenge = await _challengeService.GetNextChallenge();
+    await _verifiedTimeLoopService.RegisterTimeLoop(challenge, submission.Message);
 
-    //check if submission is valid
-    var nextChallenge = await _challengeService.GetNextChallengeValue();
-    if (String.IsNullOrEmpty(submission.NextChallenge) == false
-      && nextChallenge.ToUpper() == submission.NextChallenge.ToUpper())
-    {
+    _state.TimeLoopUserCount++;
 
-      var challenge = await _challengeService.GetNextChallenge();
-      await _verifiedTimeLoopService.RegisterTimeLoop(challenge, submission.Message);
-
-      _state.TimeLoopUserCount++;
-
-      successModal.Show();
-    }
-    else
-    {
-      failModal.Show();
-    }
-
-    //reset button
-    isLoading = false;
+    successModal.Show();
   }
+  else
+  {
+    failModal.Show();
+  }
+
+  //reset button
+  isLoading = false;
+}
 }
