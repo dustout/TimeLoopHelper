@@ -1,0 +1,120 @@
+﻿@inject ChallengeService _challengeService
+@inject VerifiedTimeLoopService _verifiedTimeLoopService
+@inject AppStateService _state
+
+<BSCard>
+  <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Title">Leave a Message</BSCard>
+    <BSCard CardType="CardType.Text">
+      Fill out the below form to leave a message for other people stuck in the time loop.
+      <hr />
+      <BSForm Model="@submission" OnValidSubmit="@ValidSubmit">
+        <DataAnnotationsValidator />
+        <BSFormGroup>
+          <BSLabel For="exampleInputEmail1">Current Challenge</BSLabel>
+          <BSBasicInput Id="value" IsReadonly="true" InputType="InputType.Text" PlaceHolder="Current Hour Challenge" @bind-Value="currentChallenge" ValidateOnChange="true" />
+          <small id="emailHelp" class="form-text text-muted">The current challenge, that would be valid last hour.</small>
+        </BSFormGroup>
+        <BSFormGroup>
+          <BSLabel For="exampleInputEmail1">Next Challenge</BSLabel>
+          <BSBasicInput Id="value" InputType="InputType.Text" PlaceHolder="Next Hour Challenge" @bind-Value="submission.NextChallenge" ValidateOnChange="true" />
+          <small id="emailHelp" class="form-text text-muted">Enter the value that will appear in the next hour.</small>
+          <BSFormFeedback For="@(() => submission.NextChallenge)" />
+        </BSFormGroup>
+        <BSFormGroup>
+          <BSLabel For="exampleText">Message</BSLabel>
+          <BSBasicInput InputType="InputType.TextArea" Name="text" Id="exampleText" Rows="5" @bind-Value="submission.Message" />
+          <small id="emailHelp" class="form-text text-muted">Leave a message for other people who are stuck in your time loop.</small>
+        </BSFormGroup>
+        <BSButton Color="Color.Primary" ButtonType="ButtonType.Submit" IsDisabled="isLoading" IsBlock="true">Submit</BSButton>
+      </BSForm>
+    </BSCard>
+  </BSCard>
+</BSCard>
+
+
+
+<BSModal @ref="successModal" IsCentered="true">
+  <BSModalBody>
+    <h3 class="text-success">Success</h3>
+
+    <p class="m-0">
+      Your Message has been posted for others in a time loop to view. Best of luck. 
+    </p>
+
+  </BSModalBody>
+  <BSModalFooter>
+    <BSButton Color="Color.Primary" IsBlock="true" @onclick="@closeModal">Close</BSButton>
+  </BSModalFooter>
+</BSModal>
+
+<BSModal @ref="failModal" IsCentered="true">
+  <BSModalBody>
+    <h3 class="text-danger">Challenge Incorrect</h3>
+    <p>
+      Sorry <code>@submission.NextChallenge</code> is not the correct value for the next challenge.
+    </p>
+    <p class="m-0">
+      Are you sure you are in a time loop?
+    </p>
+  </BSModalBody>
+  <BSModalFooter>
+    <BSButton Color="Color.Danger" IsBlock="true" @onclick="@closeModal">Try Again</BSButton>
+  </BSModalFooter>
+</BSModal>
+
+@*Modal Code*@
+@code {
+  BSModal successModal;
+  BSModal failModal;
+
+  void closeModal(MouseEventArgs e)
+  {
+    successModal.Hide();
+    failModal.Hide();
+  }
+}
+
+@code {
+  private bool isLoading = false;
+  private ChallengeSubmission submission = new ChallengeSubmission();
+  private string currentChallenge = "Loading...";
+
+  protected override async Task OnInitializedAsync()
+  {
+    currentChallenge = await _challengeService.GetCurrentChallengeValue();
+  }
+
+  private async Task ValidSubmit()
+  {
+    //prevent double clicks
+    if (isLoading)
+    {
+      return;
+    }
+
+    //set system into loading mode
+    isLoading = true;
+
+    //check if submission is valid
+    var nextChallenge = await _challengeService.GetNextChallengeValue();
+    if (String.IsNullOrEmpty(submission.NextChallenge) == false
+      && nextChallenge.ToUpper() == submission.NextChallenge.ToUpper())
+    {
+
+      var challenge = await _challengeService.GetNextChallenge();
+      await _verifiedTimeLoopService.RegisterTimeLoop(challenge, submission.Message);
+
+      _state.TimeLoopUserCount++;
+
+      successModal.Show();
+    }
+    else
+    {
+      failModal.Show();
+    }
+
+    //reset button
+    isLoading = false;
+  }
+}

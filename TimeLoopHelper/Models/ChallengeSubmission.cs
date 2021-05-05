@@ -8,7 +8,8 @@ namespace TimeLoopHelper.Models
 {
   public class ChallengeSubmission
   {
-    [Required(AllowEmptyStrings = false, ErrorMessage ="This Field Is Required")]
-    public string Value { get; set; }
+    public string NextChallenge { get; set; }
+
+    public string Message { get; set; }
   }
 }

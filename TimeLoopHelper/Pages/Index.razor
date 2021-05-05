@@ -1,26 +1,14 @@
 ﻿@page "/"
 
+<HomeHeader />
 
-<div class="text-center">
-  <img class="big-svg" src="/img/logo/Logo.svg" />
+<TimeLoopMessages />
+<br />
 
-  <h1>Help! I'm Stuck In A Time Loop!</h1>
+<NewMessageForm />
+<br />
 
-  <h3>Count of users that have passed loop</h3>
-  <div>
-    <ValidatedUsersCount />
-  </div>
+@*<TimeLoopTips />
+<br />*@
 
-  <h3>Previous Challenge Value</h3>
-  <div>
-    <CurrentChallengeValue />
-  </div>
-
-  <br />
-  <h3>Prove You Are In Time Loop</h3>
-  <div>
-    <ProveTimeLoopChallenge />
-  </div>
-
-
-</div>
+<HowItWorks />

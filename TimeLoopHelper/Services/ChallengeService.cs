@@ -11,6 +11,7 @@ namespace TimeLoopHelper.Services
   public class ChallengeService
   {
     private readonly ApplicationDbContext _db;
+    public static TimeSpan ValidForTimeSpan = new TimeSpan(hours:1, 0, 0);
 
     public ChallengeService(ApplicationDbContext db)
     {
@@ -46,9 +47,11 @@ namespace TimeLoopHelper.Services
 
     public IQueryable<Challenge> GetNextChallengeQuery()
     {
+      var targetDate = DateTime.UtcNow.Add(ValidForTimeSpan);
+
       var nextChallengeQuery = _db.Challenges
-        .Where(x => x.ValidOnStartUtc <= DateTime.UtcNow.AddHours(1))
-        .Where(x => x.ValidOnEndUtc > DateTime.UtcNow.AddHours(1));
+        .Where(x => x.ValidOnStartUtc <= targetDate)
+        .Where(x => x.ValidOnEndUtc > targetDate);
 
       return nextChallengeQuery;
     }
@@ -63,11 +66,20 @@ namespace TimeLoopHelper.Services
 
     public async Task<string> GetNextChallengeValue()
     {
-      var nextChallengeValue = await GetNextChallengeQuery()
+      try
+      {
+        var nextChallengeValue = await GetNextChallengeQuery()
         .Select(x => x.Value)
         .FirstOrDefaultAsync();
 
-      return nextChallengeValue;
+        return nextChallengeValue;
+      }
+      catch(Exception e)
+      {
+        throw e;
+      }
+
+      return null;
     }
 
     public async Task RemoveAllChallenges()
@@ -83,7 +95,6 @@ namespace TimeLoopHelper.Services
     public async Task GenerateChallenges()
     {
       //generate new challenges
-      var challengeValidForLength = new TimeSpan(hours:1, minutes: 0, seconds: 0);
       var challengeStartDate = DateTime.UtcNow.Date.AddDays(-1);
       var challengeEndDate = challengeStartDate.AddYears(20);
       var iteratorDateTime = challengeStartDate;
@@ -91,11 +102,11 @@ namespace TimeLoopHelper.Services
       while(iteratorDateTime < challengeEndDate)
       {
         //create new challenge
-        var iteratorChallenge = GenerateChallenge(iteratorDateTime, challengeValidForLength);
+        var iteratorChallenge = GenerateChallenge(iteratorDateTime, ValidForTimeSpan);
         _db.Challenges.Add(iteratorChallenge);
 
         //move forward iterator
-        iteratorDateTime += challengeValidForLength;
+        iteratorDateTime += ValidForTimeSpan;
       }
 
       //save changes
@@ -108,7 +119,7 @@ namespace TimeLoopHelper.Services
       {
         ValidOnStartUtc = start,
         ValidOnEndUtc = start + length,
-        Value = Guid.NewGuid().ToString()
+        Value = Guid.NewGuid().ToString().Substring(0, 8).ToUpper()
       };
     }
 

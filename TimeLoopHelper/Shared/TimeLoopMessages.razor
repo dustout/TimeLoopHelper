@@ -1,0 +1,65 @@
+﻿@inject VerifiedTimeLoopService _timeLoopService
+@inject AppStateService _state
+
+
+<BSCard>
+  <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Title">Messages From Others In Time Loop</BSCard>
+    <BSCard CardType="CardType.Text">
+      @if (messages == null)
+      {
+        <span>
+          Loading...
+        </span>
+      }
+      else
+      {
+        if (messages.Count() <= 0)
+        {
+          <span>
+            There are currently no messages from other people in a time loop. You might be in a time loop alone 😢
+          </span>
+        }
+        else
+        {
+          @foreach (var item in messages)
+          {
+            <p>
+              @item.Message
+            </p>
+          }
+        }
+      }
+    </BSCard>
+  </BSCard>
+</BSCard>
+
+@code {
+  IEnumerable<VerifiedTimeLoop> messages = null;
+
+  private async Task UpdateMessages()
+  {
+    messages = await _timeLoopService.GetAllVerifiedTimeLoopers();
+    StateHasChanged();
+  }
+
+  protected override async Task OnInitializedAsync()
+  {
+    await UpdateMessages();
+  }
+
+  private void UpdateMessagesVoid()
+  {
+    InvokeAsync(UpdateMessages);
+  }
+
+  protected override void OnInitialized()
+  {
+    _state.OnChange += UpdateMessagesVoid;
+  }
+
+  public void Dispose()
+  {
+    _state.OnChange -= UpdateMessagesVoid;
+  }
+}

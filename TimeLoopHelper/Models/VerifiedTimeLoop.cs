@@ -12,5 +12,7 @@ namespace TimeLoopHelper.Models
     public int ChallengeId { get; set; }
     public Challenge Challenge { get; set; }
 
+    public String Message { get; set; }
+
   }
 }

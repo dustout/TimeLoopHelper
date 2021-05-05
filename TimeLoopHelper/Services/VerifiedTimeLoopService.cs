@@ -22,11 +22,17 @@ namespace TimeLoopHelper.Services
       return await _db.VerifiedTimeLoops.CountAsync();
     }
 
-    public async Task RegisterTimeLoop(Challenge passedChallenge)
+    public async Task<IEnumerable<VerifiedTimeLoop>> GetAllVerifiedTimeLoopers()
+    {
+      return await _db.VerifiedTimeLoops.OrderByDescending(x=>x.Id).ToListAsync();
+    }
+
+    public async Task RegisterTimeLoop(Challenge passedChallenge, string message)
     {
       var newTimeLoop = new VerifiedTimeLoop()
       {
-        ChallengeId = passedChallenge.Id
+        ChallengeId = passedChallenge.Id,
+        Message = message
       };
 
       _db.VerifiedTimeLoops.Add(newTimeLoop);

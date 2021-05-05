@@ -110,12 +110,14 @@
       //set GUI to loading state
       isLoading = true;
       StateHasChanged();
+      await Task.Delay(10);
 
       //remove challenges and show state in gui
       await _challengeService.RemoveAllChallenges();
       await UpdateValues();
       isLoading = true;
       StateHasChanged();
+      await Task.Delay(10);
 
       //generate new challengess
       await _challengeService.GenerateChallenges();
@@ -133,6 +135,7 @@
       //set GUI to loading state
       isLoading = true;
       StateHasChanged();
+      await Task.Delay(10);
 
       await _verifiedService.RemoveAll();
       await UpdateValues();
