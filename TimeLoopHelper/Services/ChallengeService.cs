@@ -11,11 +11,33 @@ namespace TimeLoopHelper.Services
   public class ChallengeService
   {
     private readonly ApplicationDbContext _db;
-    public static TimeSpan ValidForTimeSpan = new TimeSpan(hours:1, 0, 0);
+    public static TimeSpan ValidForTimeSpan = new TimeSpan(hours: 1, 0, 0);
 
     public ChallengeService(ApplicationDbContext db)
     {
       _db = db;
+    }
+
+    public async Task<IEnumerable<Challenge>> GetLastChallenges(int challengeCount)
+    {
+      var queryTimespan = ValidForTimeSpan * challengeCount * -1;
+      var queryTopDate = DateTime.UtcNow;
+      var queryBottomDate = DateTime.UtcNow.Add(queryTimespan);
+
+      var lastXChallenges = await _db.Challenges
+        .Where(x => x.ValidOnStartUtc <= queryTopDate)
+        .Where(x => x.ValidOnStartUtc >= queryBottomDate)
+        .OrderBy(x => x.ValidOnStartUtc)
+        .AsNoTracking()
+        .ToListAsync();
+
+      foreach (var challenge in lastXChallenges)
+      {
+        challenge.ValidOnStartUtc = DateTime.SpecifyKind(challenge.ValidOnStartUtc, DateTimeKind.Utc);
+        challenge.ValidOnEndUtc = DateTime.SpecifyKind(challenge.ValidOnEndUtc, DateTimeKind.Utc);
+      }
+
+      return lastXChallenges;
     }
 
     public IQueryable<Challenge> GetCurrentChallengeQuery()
@@ -66,20 +88,11 @@ namespace TimeLoopHelper.Services
 
     public async Task<string> GetNextChallengeValue()
     {
-      try
-      {
-        var nextChallengeValue = await GetNextChallengeQuery()
-        .Select(x => x.Value)
-        .FirstOrDefaultAsync();
+      var nextChallengeValue = await GetNextChallengeQuery()
+      .Select(x => x.Value)
+      .FirstOrDefaultAsync();
 
-        return nextChallengeValue;
-      }
-      catch(Exception e)
-      {
-        throw e;
-      }
-
-      return null;
+      return nextChallengeValue;
     }
 
     public async Task RemoveAllChallenges()
@@ -99,7 +112,7 @@ namespace TimeLoopHelper.Services
       var challengeEndDate = challengeStartDate.AddYears(20);
       var iteratorDateTime = challengeStartDate;
 
-      while(iteratorDateTime < challengeEndDate)
+      while (iteratorDateTime < challengeEndDate)
       {
         //create new challenge
         var iteratorChallenge = GenerateChallenge(iteratorDateTime, ValidForTimeSpan);

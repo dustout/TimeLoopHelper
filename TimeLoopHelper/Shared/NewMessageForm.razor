@@ -1,6 +1,10 @@
 ﻿@inject ChallengeService _challengeService
 @inject VerifiedTimeLoopService _verifiedTimeLoopService
 @inject AppStateService _state
+@inject IJSRuntime _js;
+
+@using System.Threading;
+
 
 <BSCard>
   <BSCard CardType="CardType.Body">
@@ -11,14 +15,32 @@
       <BSForm Model="@submission" OnValidSubmit="@ValidSubmit">
         <DataAnnotationsValidator />
         <BSFormGroup>
-          <BSLabel For="exampleInputEmail1">Current Challenge</BSLabel>
-          <BSBasicInput Id="value" IsReadonly="true" InputType="InputType.Text" PlaceHolder="Current Hour Challenge" @bind-Value="currentChallenge" ValidateOnChange="true" />
-          <small id="emailHelp" class="form-text text-muted">The current challenge, that would be valid last hour.</small>
-        </BSFormGroup>
-        <BSFormGroup>
-          <BSLabel For="exampleInputEmail1">Next Challenge</BSLabel>
-          <BSBasicInput Id="value" InputType="InputType.Text" PlaceHolder="Next Hour Challenge" @bind-Value="submission.NextChallenge" ValidateOnChange="true" />
-          <small id="emailHelp" class="form-text text-muted">Enter the value that will appear in the next hour.</small>
+          <label For="exampleInputEmail1" class="m-0">Time Loop Skill Testing Question</label>
+          <p class="m-0">
+            <small>
+              @if (lastFewChallenges == null)
+              {
+                <span>Loading...</span>
+              }
+              else if (lastFewChallenges.Count() >= 3)
+              {
+                <em class="ml-3">3 Hours Ago<span>:</span> </em> <span>@challengeThreeHoursAgo.Value</span> <br />
+                <em class="ml-3">2 Hours Ago<span>:</span> </em> <span>@challengeTwoHoursAgo.Value</span> <br />
+                <em class="ml-3">1 Hour Ago</em><span>:</span> <span>@challengeOneHourAgo.Value</span> <br />
+                <em class="ml-3">Now</em><span>:</span> <span>@challengeThisHour.Value</span> <br />
+                <em class="ml-3">Future</em><span>: ????</span>
+                <small class="text-danger">&lt;-- Only time travellers will know this value (It is random data).</small> <br />
+              }
+              else
+              {
+                <span class="text-danger">GENERATE MORE CHALLENGES</span>
+              }
+              <span>
+              </span>
+            </small>
+          </p>
+          <BSBasicInput Id="value" InputType="InputType.Text" PlaceHolder="????" @bind-Value="submission.NextChallenge" ValidateOnChange="true" />
+          <small id="emailHelp" class="form-text text-muted">Complete the series above by knowing the future random value.</small>
           <BSFormFeedback For="@(() => submission.NextChallenge)" />
         </BSFormGroup>
         <BSFormGroup>
@@ -76,16 +98,46 @@
 @code {
   private bool isLoading = false;
   private ChallengeSubmission submission = new ChallengeSubmission();
-  private string currentChallenge = "Loading...";
+  private IEnumerable<Challenge> lastFewChallenges = null;
+  private Challenge challengeThisHour = null;
+  private Challenge challengeOneHourAgo = null;
+  private Challenge challengeTwoHoursAgo = null;
+  private Challenge challengeThreeHoursAgo = null;
 
   protected override async Task OnInitializedAsync()
   {
-    currentChallenge = await _challengeService.GetCurrentChallengeValue();
+    await UpdateChallengeMessages();
 
-    if (string.IsNullOrEmpty(currentChallenge))
+    var timeOfDay = DateTime.Now.TimeOfDay;
+    var nextFullHour = TimeSpan.FromHours(Math.Ceiling(timeOfDay.TotalHours));
+    var millisecondsToNextHour = (int)((nextFullHour - timeOfDay).TotalMilliseconds) + 1;
+
+    var timer = new Timer(new TimerCallback(_ =>
     {
-      currentChallenge = "NO CHALLENGE FOUND";
+      InvokeAsync(UpdateChallengeMessages);
+    }), null, millisecondsToNextHour, 1000 * 60 * 60);
+  }
+
+  protected async Task UpdateChallengeMessages()
+  {
+    lastFewChallenges = await _challengeService.GetLastChallenges(4);
+    var lastFewChallengesLength = lastFewChallenges.Count();
+
+    if (lastFewChallengesLength >= 4)
+    {
+      challengeThisHour = lastFewChallenges.ElementAt(lastFewChallengesLength - 1);
+      challengeOneHourAgo = lastFewChallenges.ElementAt(lastFewChallengesLength - 2);
+      challengeTwoHoursAgo = lastFewChallenges.ElementAt(lastFewChallengesLength - 3);
+      challengeThreeHoursAgo = lastFewChallenges.ElementAt(lastFewChallengesLength - 4);
     }
+
+
+    StateHasChanged();
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    await _js.InvokeVoidAsync("updateTimeTags");
   }
 
   private async Task ValidSubmit()
