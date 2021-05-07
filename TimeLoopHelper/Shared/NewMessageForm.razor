@@ -16,30 +16,39 @@
         <DataAnnotationsValidator />
         <BSFormGroup>
           <label For="exampleInputEmail1" class="m-0">Time Loop Skill Testing Question</label>
-          <p class="m-0">
-            <small>
+          <div class="card card-body bg-light ml-3 p-2 mb-1">
+            <p class="m-0">
+
+
               @if (lastFewChallenges == null)
               {
                 <span>Loading...</span>
               }
               else if (lastFewChallenges.Count() >= 3)
               {
-                <em class="ml-3">3 Hours Ago<span>:</span> </em> <span>@challengeThreeHoursAgo.Value</span> <br />
-                <em class="ml-3">2 Hours Ago<span>:</span> </em> <span>@challengeTwoHoursAgo.Value</span> <br />
-                <em class="ml-3">1 Hour Ago</em><span>:</span> <span>@challengeOneHourAgo.Value</span> <br />
-                <em class="ml-3">Now</em><span>:</span> <span>@challengeThisHour.Value</span> <br />
-                <em class="ml-3">Future</em><span>: ????</span>
-                <small class="text-danger">&lt;-- Only time travellers will know this value (It is random data).</small> <br />
+            <code class="text-dark">
+              @challengeThreeHoursAgo.Value (3 hours ago)
+              <br />
+              @challengeTwoHoursAgo.Value (2 hours ago)
+              <br />
+              @challengeOneHourAgo.Value (1 hour ago)
+              <br />
+              @challengeThisHour.Value (Now)
+              <br />
+              ???????? (Future)
+              <br />
+              <span class="text-danger">Hint: There is no pattern. If you are in a time loop you have already seen the future value.</span>
+            </code>
+
               }
               else
               {
                 <span class="text-danger">GENERATE MORE CHALLENGES</span>
               }
-              <span>
-              </span>
-            </small>
-          </p>
-          <BSBasicInput Id="value" InputType="InputType.Text" PlaceHolder="????" @bind-Value="submission.NextChallenge" ValidateOnChange="true" />
+            </p>
+
+          </div>
+          <BSBasicInput Id="value" InputType="InputType.Text" PlaceHolder="????????" @bind-Value="submission.NextChallenge" ValidateOnChange="true" />
           <small id="emailHelp" class="form-text text-muted">Complete the series above by knowing the future random value.</small>
           <BSFormFeedback For="@(() => submission.NextChallenge)" />
         </BSFormGroup>
