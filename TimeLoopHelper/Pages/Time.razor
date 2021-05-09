@@ -1,5 +1,4 @@
 ﻿@page "/time"
-@inject IJSRuntime _js;
 
 <br />
 <h1 class="text-center">⌚ Time</h1>
@@ -8,16 +7,16 @@
 <div class="row m-0">
   <div class="col">
     <p>
-      BROWSER DATE: <utc-to-local format="yyyy-mm-dd">@testTime.ToString("O")</utc-to-local>
+      BROWSER DATE: <ToLocal DateTime="testTime" Format="yyyy-mm-dd" />
     </p>
     <p>
-      BROWSER TIME: <utc-to-local format="shortTime">@testTime.ToString("O")</utc-to-local>
+      BROWSER TIME: <ToLocal DateTime="testTime" Format="shortTime" />
     </p>
     <p>
-      BROWSER DEFAULT: <utc-to-local>@testTime.ToString("O")</utc-to-local>
+      BROWSER DEFAULT: <ToLocal DateTime="testTime" />
     </p>
     <p>
-      UTC (RENDERED IN BROWSER): <utc-to-local format="isoUtcDateTime">@testTime.ToString("O")</utc-to-local>
+      UTC (RENDERED IN BROWSER): <ToLocal DateTime="testTime" Format="isoUtcDateTime" />
     </p>
 
     <BSButton OnClick="Update">Update</BSButton>
@@ -26,11 +25,6 @@
 
 @code {
   private DateTime testTime = DateTime.UtcNow;
-
-  protected override async Task OnAfterRenderAsync(bool firstRender)
-  {
-    await _js.InvokeVoidAsync("updateTimeTags");
-  }
 
   private void Update()
   {
